@@ -10,9 +10,12 @@ ENV/
 *.log
 job_monitor.log
 
-# Data
-data/
+# Data - ignore directory but track seen_jobs.json for GitHub Actions state persistence
+data/*
+!data/seen_jobs.json
 *.json
+# Override: DO track seen_jobs.json
+!data/seen_jobs.json
 
 # Test results
 test_results.json
