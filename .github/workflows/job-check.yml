@@ -35,26 +35,12 @@ jobs:
           python main.py
         timeout-minutes: 25
 
-      - name: Upload seen jobs for next run
+      - name: Commit seen jobs back to repo
         if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: seen-jobs-cache
-          path: data/seen_jobs.json
-          retention-days: 90
-
-      - name: Download previous seen jobs
-        if: always()
-        uses: actions/download-artifact@v3
-        with:
-          name: seen-jobs-cache
-          path: data/
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add data/seen_jobs.json
+          git commit -m "Update seen jobs tracking [skip ci]" || echo "No changes to commit"
+          git push
         continue-on-error: true
-
-      - name: Upload logs
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: job-monitor-logs
-          path: job_monitor.log
-          retention-days: 7
