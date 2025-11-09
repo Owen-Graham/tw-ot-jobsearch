@@ -98,7 +98,13 @@ async def test_mode(bot_token: str, chat_id: str):
 
 
 async def single_check(bot_token: str, chat_id: str):
-    """Run a single job check (used by GitHub Actions)"""
+    """Run a single job check (used by GitHub Actions)
+
+    Behavior:
+    - Sends full details only for jobs matching filter criteria
+    - Sends summary of newly posted jobs that don't match criteria
+    - Marks all new jobs (matched + unmatched) as seen
+    """
     try:
         logger.info("Running single job check...")
 
@@ -117,30 +123,48 @@ async def single_check(bot_token: str, chat_id: str):
         filtered_jobs = scraper.filter_jobs(jobs)
         logger.info(f"Filtered to {len(filtered_jobs)} matching jobs")
 
-        if not filtered_jobs:
-            logger.info("No new matching jobs found")
+        # Get newly posted jobs that don't match criteria
+        logger.info("Checking for new unmatched jobs...")
+        unmatched_jobs = scraper.get_new_unmatched_jobs(jobs)
+        logger.info(f"Found {len(unmatched_jobs)} new unmatched jobs")
+
+        # If no matching jobs and no unmatched jobs, nothing to do
+        if not filtered_jobs and not unmatched_jobs:
+            logger.info("No new jobs found (matched or unmatched)")
             return
 
-        # Add translations
-        logger.info("Translating jobs to English...")
-        from translator import JobTranslator
-        translator = JobTranslator()
-        translated_jobs = []
-        for job in filtered_jobs:
-            translated_job = await translator.translate_job(job)
-            translated_jobs.append(translated_job)
-
-        logger.info(f"Sending {len(translated_jobs)} jobs to Telegram...")
-
-        # Send to Telegram
+        # Initialize notifier
         notifier = TelegramNotifier(bot_token, chat_id)
-        success_count = await notifier.send_batch_alerts(translated_jobs)
 
-        # Save seen jobs to prevent duplicates on next run
-        scraper.save_seen_jobs(filtered_jobs)
-        logger.info(f"Saved {len(filtered_jobs)} jobs as seen")
+        # Send full details for matching jobs
+        if filtered_jobs:
+            logger.info("Translating matching jobs to English...")
+            from translator import JobTranslator
+            translator = JobTranslator()
+            translated_jobs = []
+            for job in filtered_jobs:
+                translated_job = await translator.translate_job(job)
+                translated_jobs.append(translated_job)
 
-        logger.info(f"✓ Check completed! Sent {success_count}/{len(translated_jobs)} messages")
+            logger.info(f"Sending {len(translated_jobs)} matching jobs to Telegram...")
+            success_count = await notifier.send_batch_alerts(translated_jobs)
+            logger.info(f"Sent {success_count}/{len(translated_jobs)} full detail messages")
+        else:
+            logger.info("No matching jobs to send full details")
+
+        # Send summary for unmatched jobs
+        if unmatched_jobs:
+            logger.info(f"Sending summary of {len(unmatched_jobs)} unmatched jobs...")
+            await notifier.send_unmatched_summary(unmatched_jobs)
+
+        # Mark all new jobs (matched + unmatched) as seen
+        all_new_jobs = filtered_jobs + unmatched_jobs
+        scraper.save_seen_jobs(all_new_jobs)
+        logger.info(f"Saved {len(all_new_jobs)} total new jobs as seen")
+
+        matched_count = len(filtered_jobs)
+        unmatched_count = len(unmatched_jobs)
+        logger.info(f"✓ Check completed! Matched: {matched_count} | Unmatched: {unmatched_count}")
 
     except Exception as e:
         logger.error(f"Check error: {e}", exc_info=True)

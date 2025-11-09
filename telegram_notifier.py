@@ -74,6 +74,65 @@ class TelegramNotifier:
         logger.info(f"Sent {success_count}/{len(jobs)} job alerts")
         return success_count
 
+    async def send_unmatched_summary(self, jobs: List[Dict]) -> bool:
+        """
+        Send a summary of newly posted jobs that don't match criteria
+
+        Args:
+            jobs: List of unmatched job postings
+
+        Returns:
+            True if message sent successfully
+        """
+        if not jobs:
+            return True
+
+        message = self._format_unmatched_summary(jobs)
+
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{self.base_url}/sendMessage",
+                    json={
+                        "chat_id": self.chat_id,
+                        "text": message,
+                        "parse_mode": "HTML",
+                        "disable_web_page_preview": True
+                    },
+                    timeout=10
+                )
+                response.raise_for_status()
+                logger.info(f"Unmatched jobs summary sent: {len(jobs)} jobs")
+                return True
+        except Exception as e:
+            logger.error(f"Failed to send unmatched summary: {e}")
+            return False
+
+    def _format_unmatched_summary(self, jobs: List[Dict]) -> str:
+        """Format unmatched jobs into a brief summary message"""
+        summary_lines = [
+            "<b>📋 新發佈的職位摘要 | New Posted Jobs Summary</b>",
+            "<i>(不符合篩選條件 | Does not match filter criteria)</i>",
+            ""
+        ]
+
+        for idx, job in enumerate(jobs[:20], 1):  # Limit to first 20 to avoid message too long
+            title = job.get('title', 'Unknown')
+            location = job.get('location', 'N/A')
+            start_date = job.get('start_date', 'N/A')
+            job_id = job.get('id', 'N/A')
+
+            summary_lines.append(f"{idx}. {title}")
+            summary_lines.append(f"   📍 {location} | 📅 {start_date}")
+            summary_lines.append(f"   🔗 ID: <code>{job_id}</code>")
+            summary_lines.append("")
+
+        if len(jobs) > 20:
+            summary_lines.append(f"<i>... 及其他 {len(jobs) - 20} 筆職位 | ... and {len(jobs) - 20} more jobs</i>")
+
+        message = "\n".join(summary_lines)
+        return message
+
     def _format_job_message(self, job: Dict) -> str:
         """Format job data into a Telegram message with Chinese and English"""
         title = job.get('title', 'Unknown')

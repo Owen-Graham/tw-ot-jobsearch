@@ -30,7 +30,7 @@ class JobScraper:
     # Filter criteria
     TARGET_LOCATIONS = {"台北", "臺北", "新北", "新北市", "台北市", "桃園", "桃園市"}
     EXCLUDE_KEYWORDS = {"小兒", "小兒自費", "pediatric"}
-    TARGET_START_DATE_MIN = date(2025, 11, 1)  # Nov 1, 2025 (adjusted for current job postings)
+    TARGET_START_DATE_MIN = date(2026, 2, 15)  # Feb 15, 2026
     TARGET_START_DATE_MAX = date(2026, 4, 15)  # Apr 15, 2026
 
     # File to track seen job IDs
@@ -223,6 +223,34 @@ class JobScraper:
 
         logger.info(f"Filtered to {len(filtered)} matching job postings")
         return filtered
+
+    def get_new_unmatched_jobs(self, jobs: List[Dict]) -> List[Dict]:
+        """Get newly posted jobs that don't match criteria but haven't been seen before"""
+        new_unmatched = []
+
+        for job in jobs:
+            # Skip if already seen
+            if job['id'] in self.seen_jobs:
+                continue
+
+            # Check location
+            location = job['location'].lower()
+            location_match = any(loc.lower() in location for loc in self.TARGET_LOCATIONS)
+
+            # Check pediatric exclusion
+            full_text = job['full_text']
+            has_excluded = any(keyword in full_text for keyword in self.EXCLUDE_KEYWORDS)
+
+            # Check start date
+            date_ok = self._check_start_date(job['start_date'])
+
+            # Include if it's new AND doesn't match the criteria
+            # (i.e., fails at least one filter)
+            if not (location_match and not has_excluded and date_ok):
+                new_unmatched.append(job)
+
+        logger.info(f"Found {len(new_unmatched)} new unmatched job postings")
+        return new_unmatched
 
     def _check_start_date(self, date_text: str) -> bool:
         """Check if job start date is within target range (Feb 14 - Apr 15, 2026)"""
