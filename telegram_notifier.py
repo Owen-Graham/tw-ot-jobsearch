@@ -88,6 +88,7 @@ class TelegramNotifier:
         salary = job.get('salary', 'N/A')
         salary_en = job.get('salary_en', '')
         url = job.get('url', '')
+        job_id = job.get('id', 'N/A')
 
         # Build message with Chinese and English
         message = f"""<b>🇹🇼 新工作機會！ | 🇺🇸 New Job Opportunity!</b>
@@ -113,6 +114,8 @@ class TelegramNotifier:
 {salary_en if salary_en else ''}
 
 <a href="{url}">查看詳情 | View Details</a>
+
+<code>Job ID: {job_id}</code>
 """
         return message
 

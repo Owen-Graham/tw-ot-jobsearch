@@ -147,9 +147,6 @@ class JobScraper:
 
         job['title'] = title_elem.get_text(strip=True) if title_elem else item.get_text(strip=True)[:50]
 
-        # Generate unique ID
-        job['id'] = self._generate_job_id(job['title'])
-
         # Extract all text for comprehensive filtering
         job['full_text'] = item.get_text(separator=' ', strip=True).lower()
 
@@ -177,11 +174,19 @@ class JobScraper:
 
         job['url'] = self.URL
 
+        # Generate unique hash ID from all job fields
+        job['id'] = self._generate_job_id(job)
+
         return job
 
-    def _generate_job_id(self, title: str) -> str:
-        """Generate a unique ID for a job posting"""
-        return f"{title}".lower().replace(" ", "_")[:50]
+    def _generate_job_id(self, job_dict: Dict) -> str:
+        """Generate a unique hash ID from the entire job posting for maximum uniqueness"""
+        import hashlib
+        # Create a deterministic string from all job fields
+        job_string = json.dumps(job_dict, sort_keys=True, ensure_ascii=False)
+        # Hash it for a compact, unique identifier
+        job_hash = hashlib.sha256(job_string.encode('utf-8')).hexdigest()[:16]
+        return job_hash
 
     def filter_jobs(self, jobs: List[Dict]) -> List[Dict]:
         """Filter jobs based on criteria"""
