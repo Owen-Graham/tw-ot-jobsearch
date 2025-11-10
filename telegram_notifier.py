@@ -121,8 +121,15 @@ class TelegramNotifier:
             location = job.get('location', 'N/A')
             start_date = job.get('start_date', 'N/A')
             job_id = job.get('id', 'N/A')
+            url = job.get('url', '')
 
-            summary_lines.append(f"{idx}. {title}")
+            # Create hyperlinked title if URL exists
+            if url:
+                title_link = f'<a href="{url}">{title}</a>'
+            else:
+                title_link = title
+
+            summary_lines.append(f"{idx}. {title_link}")
             summary_lines.append(f"   📍 {location} | 📅 {start_date}")
             summary_lines.append(f"   🔗 ID: <code>{job_id}</code>")
             summary_lines.append("")
