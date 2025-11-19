@@ -50,13 +50,13 @@ def load_config():
     }
 
 
-async def test_mode(bot_token: str, chat_id: str):
+async def test_mode(bot_token: str, chat_id: str, debug: bool = True):
     """Test mode: scrape and send ALL jobs with debug details for inspection"""
     try:
         logger.info("Running in TEST mode - scraping all jobs with detailed debug info...")
 
         # Scrape jobs (all pages) with accurate page/position tracking
-        scraper = JobScraper()
+        scraper = JobScraper(debug=debug)
         jobs = await scraper.fetch_and_parse_all_pages()
 
         if not jobs:
@@ -86,18 +86,21 @@ async def test_mode(bot_token: str, chat_id: str):
         sys.exit(1)
 
 
-async def single_check(bot_token: str, chat_id: str):
+async def single_check(bot_token: str, chat_id: str, debug: bool = True):
     """Run a single job check (used by GitHub Actions)
 
     Behavior:
     - Sends full details only for jobs matching filter criteria
     - Sends summary of newly posted jobs that don't match criteria
     - Marks all new jobs (matched + unmatched) as seen
+
+    Args:
+        debug: Enable debug mode to save HTML and JSON files
     """
     try:
         logger.info("Running single job check...")
 
-        scraper = JobScraper()
+        scraper = JobScraper(debug=debug)
         # Fetch and parse all pages with accurate page/position tracking
         jobs = await scraper.fetch_and_parse_all_pages()
 
@@ -167,12 +170,12 @@ async def single_check(bot_token: str, chat_id: str):
         sys.exit(1)
 
 
-async def show_listings(bot_token: str, chat_id: str):
+async def show_listings(bot_token: str, chat_id: str, debug: bool = True):
     """Show all new listings in terminal with bilingual format"""
     try:
         logger.info("Fetching all matching job listings...")
 
-        scraper = JobScraper()
+        scraper = JobScraper(debug=debug)
         jobs = await scraper.fetch_and_parse_all_pages()
 
         if not jobs:
@@ -272,6 +275,11 @@ async def main():
         action='store_true',
         help='Show all new listings in terminal with bilingual format (Chinese + English)'
     )
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Enable debug mode: saves raw HTML, extracted jobs JSON, and analysis to debug_output/'
+    )
     args = parser.parse_args()
 
     try:
@@ -287,16 +295,17 @@ async def main():
 
         # Run in show mode if --show flag is provided
         if args.show:
-            await show_listings(config['bot_token'], config['chat_id'])
+            await show_listings(config['bot_token'], config['chat_id'], debug=args.debug)
             return
 
         # Run in test mode if --test flag is provided
         if args.test:
-            await test_mode(config['bot_token'], config['chat_id'])
+            await test_mode(config['bot_token'], config['chat_id'], debug=args.debug)
             return
 
         # Normal operation: run single check (suitable for GitHub Actions)
-        await single_check(config['bot_token'], config['chat_id'])
+        # Debug is always enabled for GitHub Actions
+        await single_check(config['bot_token'], config['chat_id'], debug=True)
 
     except ValueError as e:
         logger.error(f"Configuration error: {e}")

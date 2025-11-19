@@ -38,15 +38,15 @@ jobs:
           python main.py
         timeout-minutes: 25
 
-      - name: Commit seen jobs back to repo
+      - name: Commit seen jobs and debug output back to repo
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add data/seen_jobs.json
-          git commit -m "Update seen jobs tracking [skip ci]" || echo "No changes to commit"
+          git add data/seen_jobs.json debug_output/ 2>/dev/null || true
+          git commit -m "Update seen jobs tracking and debug output [skip ci]" || echo "No changes to commit"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git push
         continue-on-error: true

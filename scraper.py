@@ -36,9 +36,15 @@ class JobScraper:
     # File to track seen job IDs
     SEEN_JOBS_FILE = Path("data/seen_jobs.json")
 
-    def __init__(self):
+    def __init__(self, debug=True):
         self.SEEN_JOBS_FILE.parent.mkdir(parents=True, exist_ok=True)
         self.seen_jobs = self._load_seen_jobs()
+        self.debug = debug
+        self.debug_dir = Path("debug_output") if debug else None
+        if self.debug:
+            self.debug_dir.mkdir(exist_ok=True)
+            logger.info(f"Debug mode enabled. Output will be saved to {self.debug_dir}/")
+        self.page_htmls = {}  # Store HTML for debugging
 
     async def fetch_and_parse_all_pages(self) -> List[Dict]:
         """
@@ -72,6 +78,14 @@ class JobScraper:
                         logger.info(f"Content unchanged - reached end of pagination")
                         break
 
+                    # Save HTML for debugging if in debug mode
+                    if self.debug:
+                        self.page_htmls[page_num] = current_html
+                        html_file = self.debug_dir / f"page_{page_num}.html"
+                        with open(html_file, 'w', encoding='utf-8') as f:
+                            f.write(current_html)
+                        logger.info(f"Saved HTML debug file: {html_file}")
+
                     # Parse and tag jobs from this page immediately
                     jobs_from_page = self._parse_page_jobs(current_html, page_num)
                     all_jobs.extend(jobs_from_page)
@@ -98,6 +112,35 @@ class JobScraper:
                 await browser.close()
 
                 logger.info(f"Completed fetching all pages. Total jobs parsed: {len(all_jobs)}")
+
+                # Save extracted jobs to JSON for debugging if in debug mode
+                if self.debug:
+                    jobs_file = self.debug_dir / "extracted_jobs.json"
+                    with open(jobs_file, 'w', encoding='utf-8') as f:
+                        json.dump(all_jobs, f, ensure_ascii=False, indent=2)
+                    logger.info(f"Saved extracted jobs debug file: {jobs_file}")
+
+                    # Save a summary with location analysis
+                    summary_file = self.debug_dir / "location_analysis.json"
+                    location_analysis = {
+                        "total_jobs": len(all_jobs),
+                        "jobs_with_location": sum(1 for j in all_jobs if j.get('location')),
+                        "jobs_without_location": sum(1 for j in all_jobs if not j.get('location')),
+                        "jobs_missing_location": [
+                            {
+                                "id": j.get('id'),
+                                "page": j.get('page_number'),
+                                "position": j.get('listing_position'),
+                                "title": j.get('title'),
+                                "full_text_preview": j.get('full_text', '')[:200]
+                            }
+                            for j in all_jobs if not j.get('location')
+                        ]
+                    }
+                    with open(summary_file, 'w', encoding='utf-8') as f:
+                        json.dump(location_analysis, f, ensure_ascii=False, indent=2)
+                    logger.info(f"Saved location analysis: {summary_file}")
+
                 return all_jobs
 
             except Exception as e:
