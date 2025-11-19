@@ -40,12 +40,17 @@ class JobScraper:
         self.SEEN_JOBS_FILE.parent.mkdir(parents=True, exist_ok=True)
         self.seen_jobs = self._load_seen_jobs()
 
-    async def fetch_all_pages(self) -> Optional[str]:
-        """Fetch all job postings pages using Playwright by clicking through pagination"""
+    async def fetch_and_parse_all_pages(self) -> List[Dict]:
+        """
+        Fetch all job postings pages using Playwright and parse them per-page.
+        Returns a list of all jobs with accurate page_number and listing_position.
+        """
         import os
         # Detect if running in CI environment (GitHub Actions, etc.)
         is_ci = os.getenv('CI') or os.getenv('GITHUB_ACTIONS')
         headless_mode = True if is_ci else False
+
+        all_jobs = []
 
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=headless_mode)
@@ -55,7 +60,6 @@ class JobScraper:
                 await page.goto(self.URL, wait_until='networkidle')
                 await page.wait_for_timeout(2000)
 
-                all_html = []
                 page_num = 1
                 previous_html = None
 
@@ -68,7 +72,11 @@ class JobScraper:
                         logger.info(f"Content unchanged - reached end of pagination")
                         break
 
-                    all_html.append(current_html)
+                    # Parse and tag jobs from this page immediately
+                    jobs_from_page = self._parse_page_jobs(current_html, page_num)
+                    all_jobs.extend(jobs_from_page)
+                    logger.info(f"Found {len(jobs_from_page)} jobs on page {page_num}")
+
                     previous_html = current_html
 
                     # Try to find and click the next button
@@ -89,35 +97,65 @@ class JobScraper:
 
                 await browser.close()
 
-                # Combine all HTML pages into one
-                if all_html:
-                    combined_html = all_html[0]  # Start with first page
-                    # For additional pages, extract just the job items and append
-                    for html in all_html[1:]:
-                        combined_html += html
-                    return combined_html
-                else:
-                    return None
+                logger.info(f"Completed fetching all pages. Total jobs parsed: {len(all_jobs)}")
+                return all_jobs
 
             except Exception as e:
                 logger.error(f"Failed to fetch pages: {e}")
                 await browser.close()
-                return None
+                return []
 
-    def parse_jobs(self, html: str) -> List[Dict]:
-        """Parse job postings from HTML"""
+    def _parse_page_jobs(self, html: str, page_number: int) -> List[Dict]:
+        """
+        Parse jobs from a single page's HTML and tag them with page_number and listing_position.
+        This ensures accurate attribution of each job to its page.
+        """
         soup = BeautifulSoup(html, 'html.parser')
-        jobs = []
+        jobs_on_page = []
 
-        # Find all job items - look for common patterns
-        job_items = soup.find_all('div', class_=re.compile(r'recruit|job', re.I))
+        # Find all job items on this page - use specific 'recruitItem' class to avoid parent containers
+        # Using class_='recruitItem' specifically avoids matching 'recruitList' parent containers
+        job_items = soup.find_all('div', class_='recruitItem')
 
-        logger.debug(f"Found {len(job_items)} potential job elements")
+        logger.debug(f"Found {len(job_items)} potential job elements on page {page_number}")
 
-        for item in job_items:
+        # Extract and tag each job with page and position information
+        for position_idx, item in enumerate(job_items, 1):
             try:
                 job = self._extract_job_info(item)
                 if job and job.get('title'):  # Only add if we got a title
+                    # Tag with accurate page and position (1-indexed)
+                    job['page_number'] = page_number
+                    job['listing_position'] = position_idx
+                    jobs_on_page.append(job)
+            except Exception as e:
+                logger.debug(f"Failed to extract job info from page {page_number}, position {position_idx}: {e}")
+                continue
+
+        return jobs_on_page
+
+    def parse_jobs(self, html: str) -> List[Dict]:
+        """
+        Deprecated: This method is kept for backward compatibility.
+        Use fetch_and_parse_all_pages() instead for accurate page/position tracking.
+
+        Parse job postings from combined HTML (single-pass parsing).
+        Note: Page and position information may be inaccurate with this method.
+        """
+        jobs = []
+        soup = BeautifulSoup(html, 'html.parser')
+        # Use specific 'recruitItem' class to avoid matching parent containers
+        job_items = soup.find_all('div', class_='recruitItem')
+
+        logger.debug(f"Found {len(job_items)} potential job elements")
+
+        for idx, item in enumerate(job_items, 1):
+            try:
+                job = self._extract_job_info(item)
+                if job and job.get('title'):
+                    # Assign to pages (roughly 10 per page)
+                    job['page_number'] = (idx - 1) // 10 + 1
+                    job['listing_position'] = ((idx - 1) % 10) + 1
                     jobs.append(job)
             except Exception as e:
                 logger.debug(f"Failed to extract job info: {e}")
@@ -253,9 +291,19 @@ class JobScraper:
         return new_unmatched
 
     def _check_start_date(self, date_text: str) -> bool:
-        """Check if job start date is within target range (Feb 14 - Apr 15, 2026)"""
+        """Check if job start date is within target range (Feb 15 - Apr 15, 2026)
+
+        Returns False if:
+        - Date is empty or not found
+        - Date is 0000-00-00 (placeholder for empty)
+        - Date is outside the target range
+        """
         if not date_text:
-            return True  # Accept if date not found
+            return False  # Reject if date not found
+
+        # Reject placeholder/empty dates
+        if date_text.startswith('0000'):
+            return False
 
         try:
             patterns = [
@@ -272,9 +320,9 @@ class JobScraper:
                     return self.TARGET_START_DATE_MIN <= job_date <= self.TARGET_START_DATE_MAX
         except (ValueError, IndexError) as e:
             logger.debug(f"Could not parse date '{date_text}': {e}")
-            return True
+            return False
 
-        return True
+        return False  # If no date pattern found, reject
 
     def _load_seen_jobs(self) -> set:
         """Load previously seen job IDs"""

@@ -109,7 +109,7 @@ class TelegramNotifier:
             return False
 
     def _format_unmatched_summary(self, jobs: List[Dict]) -> str:
-        """Format unmatched jobs into a brief summary message"""
+        """Format unmatched jobs into a brief summary message with translated content"""
         summary_lines = [
             "<b>📋 新發佈的職位摘要 | New Posted Jobs Summary</b>",
             "<i>(不符合篩選條件 | Does not match filter criteria)</i>",
@@ -117,20 +117,20 @@ class TelegramNotifier:
         ]
 
         for idx, job in enumerate(jobs[:20], 1):  # Limit to first 20 to avoid message too long
-            title = job.get('title', 'Unknown')
-            location = job.get('location', 'N/A')
+            # Use translated versions if available, fallback to Chinese
+            title = job.get('title_en', job.get('title', 'Unknown'))
+            location = job.get('location_en', job.get('location', 'N/A'))
             start_date = job.get('start_date', 'N/A')
             job_id = job.get('id', 'N/A')
-            url = job.get('url', '')
+            listing_position = job.get('listing_position', '?')
+            page_number = job.get('page_number', '?')
 
-            # Create hyperlinked title if URL exists
-            if url:
-                title_link = f'<a href="{url}">{title}</a>'
-            else:
-                title_link = title
+            # Include page and position info to help locate on website
+            location_info = f"Page {page_number}, Listing #{listing_position}"
 
-            summary_lines.append(f"{idx}. {title_link}")
+            summary_lines.append(f"{idx}. {title}")
             summary_lines.append(f"   📍 {location} | 📅 {start_date}")
+            summary_lines.append(f"   📌 {location_info}")
             summary_lines.append(f"   🔗 ID: <code>{job_id}</code>")
             summary_lines.append("")
 
@@ -184,6 +184,117 @@ class TelegramNotifier:
 <code>Job ID: {job_id}</code>
 """
         return message
+
+    def _format_debug_job_message(self, job: Dict) -> str:
+        """Format job data with ALL extracted fields for debugging in test mode"""
+        title = job.get('title', 'Unknown')
+        title_en = job.get('title_en', '')
+        location = job.get('location', 'N/A')
+        location_en = job.get('location_en', '')
+        organization = job.get('organization', 'N/A')
+        organization_en = job.get('organization_en', '')
+        start_date = job.get('start_date', 'N/A')
+        employment_type = job.get('employment_type', 'N/A')
+        employment_type_en = job.get('employment_type_en', '')
+        salary = job.get('salary', 'N/A')
+        salary_en = job.get('salary_en', '')
+        url = job.get('url', '')
+        job_id = job.get('id', 'N/A')
+        page_number = job.get('page_number', '?')
+        listing_position = job.get('listing_position', '?')
+        full_text = job.get('full_text', '')[:200]  # First 200 chars of full text
+
+        # Build comprehensive debug message
+        message = f"""<b>🔍 DEBUG: Job Listing</b>
+
+<b>📍 Page {page_number}, Position #{listing_position}</b>
+
+<b>職位 | Position:</b>
+{title}
+{title_en if title_en else ''}
+
+<b>機構 | Organization:</b>
+{organization}
+{organization_en if organization_en else ''}
+
+<b>地點 | Location:</b>
+{location}
+{location_en if location_en else ''}
+
+<b>開始日期 | Start Date:</b> {start_date}
+
+<b>職位類型 | Employment Type:</b>
+{employment_type}
+{employment_type_en if employment_type_en else ''}
+
+<b>薪資 | Salary:</b>
+{salary}
+{salary_en if salary_en else ''}
+
+<b>Full Text (first 200 chars):</b>
+<code>{full_text}</code>
+
+<b>Job ID:</b> <code>{job_id}</code>
+"""
+        return message
+
+    async def send_debug_batch_alerts(self, jobs: List[Dict]) -> int:
+        """
+        Send debug alerts for multiple jobs (splits long messages if needed)
+
+        Args:
+            jobs: List of job postings
+
+        Returns:
+            Number of successfully sent messages
+        """
+        success_count = 0
+
+        for idx, job in enumerate(jobs, 1):
+            message = self._format_debug_job_message(job)
+
+            # Telegram has a 4096 character limit, split if needed
+            if len(message) > 4000:
+                # Split into chunks
+                chunks = [message[i:i+4000] for i in range(0, len(message), 4000)]
+                for chunk in chunks:
+                    try:
+                        async with httpx.AsyncClient() as client:
+                            response = await client.post(
+                                f"{self.base_url}/sendMessage",
+                                json={
+                                    "chat_id": self.chat_id,
+                                    "text": chunk,
+                                    "parse_mode": "HTML",
+                                    "disable_web_page_preview": True
+                                },
+                                timeout=10
+                            )
+                            response.raise_for_status()
+                            success_count += 1
+                    except Exception as e:
+                        logger.error(f"Failed to send Telegram debug message (chunk): {e}")
+            else:
+                try:
+                    async with httpx.AsyncClient() as client:
+                        response = await client.post(
+                            f"{self.base_url}/sendMessage",
+                            json={
+                                "chat_id": self.chat_id,
+                                "text": message,
+                                "parse_mode": "HTML",
+                                "disable_web_page_preview": True
+                            },
+                            timeout=10
+                        )
+                        response.raise_for_status()
+                        logger.info(f"Sent debug message for job {idx}/{len(jobs)}: {job.get('title', 'Unknown')}")
+                        success_count += 1
+                except Exception as e:
+                    logger.error(f"Failed to send Telegram debug message: {e}")
+
+        logger.info(f"Sent {success_count}/{len(jobs)} debug alerts")
+        return success_count
 
     def test_connection(self) -> bool:
         """Test if the Telegram bot token is valid"""

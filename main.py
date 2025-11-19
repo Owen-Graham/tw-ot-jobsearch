@@ -51,46 +51,35 @@ def load_config():
 
 
 async def test_mode(bot_token: str, chat_id: str):
-    """Test mode: scrape and send all jobs (regardless of seen status)"""
+    """Test mode: scrape and send ALL jobs with debug details for inspection"""
     try:
-        logger.info("Running in TEST mode - scraping all jobs...")
+        logger.info("Running in TEST mode - scraping all jobs with detailed debug info...")
 
-        # Scrape jobs (all pages)
+        # Scrape jobs (all pages) with accurate page/position tracking
         scraper = JobScraper()
-        html = await scraper.fetch_all_pages()
+        jobs = await scraper.fetch_and_parse_all_pages()
 
-        if not html:
-            logger.error("Failed to fetch pages")
+        if not jobs:
+            logger.error("Failed to fetch and parse pages")
             return
 
-        logger.info("Parsing jobs...")
-        jobs = scraper.parse_jobs(html)
         logger.info(f"Found {len(jobs)} total jobs")
 
-        logger.info("Filtering jobs...")
-        filtered_jobs = scraper.filter_jobs(jobs)
-        logger.info(f"Filtered to {len(filtered_jobs)} matching jobs")
-
-        if not filtered_jobs:
-            logger.info("No matching jobs found")
-            return
-
-        # Add translations
         logger.info("Translating jobs to English...")
         from translator import JobTranslator
         translator = JobTranslator()
         translated_jobs = []
-        for job in filtered_jobs:
+        for job in jobs:
             translated_job = await translator.translate_job(job)
             translated_jobs.append(translated_job)
 
-        logger.info(f"Sending {len(translated_jobs)} jobs to Telegram...")
+        logger.info(f"Sending {len(translated_jobs)} jobs to Telegram with DEBUG details...")
 
-        # Send to Telegram
+        # Send ALL jobs with debug info (no filtering) to Telegram
         notifier = TelegramNotifier(bot_token, chat_id)
-        success_count = await notifier.send_batch_alerts(translated_jobs)
+        success_count = await notifier.send_debug_batch_alerts(translated_jobs)
 
-        logger.info(f"✓ Test mode completed! Sent {success_count}/{len(translated_jobs)} messages")
+        logger.info(f"✓ Test mode completed! Sent {success_count}/{len(translated_jobs)} debug messages")
 
     except Exception as e:
         logger.error(f"Test mode error: {e}", exc_info=True)
@@ -109,14 +98,13 @@ async def single_check(bot_token: str, chat_id: str):
         logger.info("Running single job check...")
 
         scraper = JobScraper()
-        html = await scraper.fetch_all_pages()
+        # Fetch and parse all pages with accurate page/position tracking
+        jobs = await scraper.fetch_and_parse_all_pages()
 
-        if not html:
-            logger.error("Failed to fetch pages")
+        if not jobs:
+            logger.error("Failed to fetch and parse pages")
             return
 
-        logger.info("Parsing jobs...")
-        jobs = scraper.parse_jobs(html)
         logger.info(f"Found {len(jobs)} total jobs")
 
         logger.info("Filtering jobs...")
@@ -154,8 +142,16 @@ async def single_check(bot_token: str, chat_id: str):
 
         # Send summary for unmatched jobs
         if unmatched_jobs:
-            logger.info(f"Sending summary of {len(unmatched_jobs)} unmatched jobs...")
-            await notifier.send_unmatched_summary(unmatched_jobs)
+            logger.info("Translating unmatched jobs to English...")
+            from translator import JobTranslator
+            translator = JobTranslator()
+            translated_unmatched = []
+            for job in unmatched_jobs:
+                translated_job = await translator.translate_job(job)
+                translated_unmatched.append(translated_job)
+
+            logger.info(f"Sending summary of {len(translated_unmatched)} unmatched jobs...")
+            await notifier.send_unmatched_summary(translated_unmatched)
 
         # Mark all new jobs (matched + unmatched) as seen
         all_new_jobs = filtered_jobs + unmatched_jobs
@@ -177,14 +173,12 @@ async def show_listings(bot_token: str, chat_id: str):
         logger.info("Fetching all matching job listings...")
 
         scraper = JobScraper()
-        html = await scraper.fetch_all_pages()
+        jobs = await scraper.fetch_and_parse_all_pages()
 
-        if not html:
-            logger.error("Failed to fetch pages")
+        if not jobs:
+            logger.error("Failed to fetch and parse pages")
             return
 
-        logger.info("Parsing jobs...")
-        jobs = scraper.parse_jobs(html)
         logger.info(f"Found {len(jobs)} total jobs")
 
         logger.info("Filtering jobs...")
