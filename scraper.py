@@ -231,9 +231,9 @@ class JobScraper:
         # Extract all text for comprehensive filtering
         job['full_text'] = item.get_text(separator=' ', strip=True).lower()
 
-        # Try to extract location - often contains Taiwan region names
-        location_match = re.search(r'(台北|臺北|新北|桃園|新北市|台北市|桃園市)', job['full_text'])
-        job['location'] = location_match.group(0) if location_match else ""
+        # Extract location directly from HTML place element
+        place_elem = item.find('p', class_='place')
+        job['location'] = place_elem.get_text(strip=True) if place_elem else ""
 
         # Extract organization - usually before job title or in parent elements
         org_lines = []
