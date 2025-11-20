@@ -26,30 +26,46 @@ class TelegramNotifier:
 
     async def send_job_alert(self, job: Dict) -> bool:
         """
-        Send a job posting alert via Telegram
+        Send a job posting alert via Telegram (two messages: one Chinese, one English)
 
         Args:
             job: Job posting dictionary with title, location, etc.
 
         Returns:
-            True if message sent successfully
+            True if both messages sent successfully
         """
-        message = self._format_job_message(job)
+        message_cn = self._format_job_message(job, language='zh')
+        message_en = self._format_job_message(job, language='en')
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(
+                # Send Chinese message
+                response_cn = await client.post(
                     f"{self.base_url}/sendMessage",
                     json={
                         "chat_id": self.chat_id,
-                        "text": message,
+                        "text": message_cn,
                         "parse_mode": "HTML",
                         "disable_web_page_preview": True
                     },
                     timeout=10
                 )
-                response.raise_for_status()
-                logger.info(f"Telegram message sent for: {job['title']}")
+                response_cn.raise_for_status()
+
+                # Send English message
+                response_en = await client.post(
+                    f"{self.base_url}/sendMessage",
+                    json={
+                        "chat_id": self.chat_id,
+                        "text": message_en,
+                        "parse_mode": "HTML",
+                        "disable_web_page_preview": True
+                    },
+                    timeout=10
+                )
+                response_en.raise_for_status()
+
+                logger.info(f"Telegram messages sent (CN + EN) for: {job['title']}")
                 return True
         except Exception as e:
             logger.error(f"Failed to send Telegram message: {e}")
@@ -76,113 +92,190 @@ class TelegramNotifier:
 
     async def send_unmatched_summary(self, jobs: List[Dict]) -> bool:
         """
-        Send a summary of newly posted jobs that don't match criteria
+        Send summaries of newly posted jobs that don't match criteria (Chinese + English)
 
         Args:
             jobs: List of unmatched job postings
 
         Returns:
-            True if message sent successfully
+            True if both messages sent successfully
         """
         if not jobs:
             return True
 
-        message = self._format_unmatched_summary(jobs)
+        message_cn = self._format_unmatched_summary(jobs, language='zh')
+        message_en = self._format_unmatched_summary(jobs, language='en')
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(
+                # Send Chinese summary
+                response_cn = await client.post(
                     f"{self.base_url}/sendMessage",
                     json={
                         "chat_id": self.chat_id,
-                        "text": message,
+                        "text": message_cn,
                         "parse_mode": "HTML",
                         "disable_web_page_preview": True
                     },
                     timeout=10
                 )
-                response.raise_for_status()
-                logger.info(f"Unmatched jobs summary sent: {len(jobs)} jobs")
+                response_cn.raise_for_status()
+
+                # Send English summary
+                response_en = await client.post(
+                    f"{self.base_url}/sendMessage",
+                    json={
+                        "chat_id": self.chat_id,
+                        "text": message_en,
+                        "parse_mode": "HTML",
+                        "disable_web_page_preview": True
+                    },
+                    timeout=10
+                )
+                response_en.raise_for_status()
+
+                logger.info(f"Unmatched jobs summaries sent (CN + EN): {len(jobs)} jobs")
                 return True
         except Exception as e:
             logger.error(f"Failed to send unmatched summary: {e}")
             return False
 
-    def _format_unmatched_summary(self, jobs: List[Dict]) -> str:
-        """Format unmatched jobs into a brief summary message with translated content"""
-        summary_lines = [
-            "<b>📋 新發佈的職位摘要 | New Posted Jobs Summary</b>",
-            "<i>(不符合篩選條件 | Does not match filter criteria)</i>",
-            ""
-        ]
+    def _format_unmatched_summary(self, jobs: List[Dict], language: str = 'zh') -> str:
+        """Format unmatched jobs into a brief summary message (pure Chinese or pure English)
 
-        for idx, job in enumerate(jobs[:20], 1):  # Limit to first 20 to avoid message too long
-            # Use translated versions if available, fallback to Chinese
-            title = job.get('title_en', job.get('title', 'Unknown'))
-            location = job.get('location_en', job.get('location', 'N/A'))
-            start_date = job.get('start_date', 'N/A')
-            job_id = job.get('id', 'N/A')
-            listing_position = job.get('listing_position', '?')
-            page_number = job.get('page_number', '?')
+        Args:
+            jobs: List of unmatched job postings
+            language: 'zh' for pure Chinese, 'en' for pure English
+        """
+        if language == 'en':
+            summary_lines = [
+                "<b>📋 New Posted Jobs Summary</b>",
+                "<i>(Does not match filter criteria)</i>",
+                ""
+            ]
 
-            # Include page and position info to help locate on website
-            location_info = f"Page {page_number}, Listing #{listing_position}"
+            for idx, job in enumerate(jobs[:20], 1):
+                title = job.get('title_en', job.get('title', 'Unknown'))
+                location = job.get('location_en', job.get('location', 'N/A'))
+                start_date = job.get('start_date', 'N/A')
+                job_id = job.get('id', 'N/A')
+                listing_position = job.get('listing_position', '?')
+                page_number = job.get('page_number', '?')
 
-            summary_lines.append(f"{idx}. {title}")
-            summary_lines.append(f"   📍 {location} | 📅 {start_date}")
-            summary_lines.append(f"   📌 {location_info}")
-            summary_lines.append(f"   🔗 ID: <code>{job_id}</code>")
-            summary_lines.append("")
+                location_info = f"Page {page_number}, Listing #{listing_position}"
 
-        if len(jobs) > 20:
-            summary_lines.append(f"<i>... 及其他 {len(jobs) - 20} 筆職位 | ... and {len(jobs) - 20} more jobs</i>")
+                summary_lines.append(f"{idx}. {title}")
+                summary_lines.append(f"   📍 {location} | 📅 {start_date}")
+                summary_lines.append(f"   📌 {location_info}")
+                summary_lines.append(f"   🔗 ID: <code>{job_id}</code>")
+                summary_lines.append("")
+
+            if len(jobs) > 20:
+                summary_lines.append(f"<i>... and {len(jobs) - 20} more jobs</i>")
+
+        else:  # Chinese (default)
+            summary_lines = [
+                "<b>📋 新發佈的職位摘要</b>",
+                "<i>(不符合篩選條件)</i>",
+                ""
+            ]
+
+            for idx, job in enumerate(jobs[:20], 1):
+                title = job.get('title', 'Unknown')
+                location = job.get('location', 'N/A')
+                start_date = job.get('start_date', 'N/A')
+                job_id = job.get('id', 'N/A')
+                listing_position = job.get('listing_position', '?')
+                page_number = job.get('page_number', '?')
+
+                location_info = f"第 {page_number} 頁，第 {listing_position} 項"
+
+                summary_lines.append(f"{idx}. {title}")
+                summary_lines.append(f"   📍 {location} | 📅 {start_date}")
+                summary_lines.append(f"   📌 {location_info}")
+                summary_lines.append(f"   🔗 ID: <code>{job_id}</code>")
+                summary_lines.append("")
+
+            if len(jobs) > 20:
+                summary_lines.append(f"<i>... 及其他 {len(jobs) - 20} 筆職位</i>")
 
         message = "\n".join(summary_lines)
         return message
 
-    def _format_job_message(self, job: Dict) -> str:
-        """Format job data into a Telegram message with Chinese and English"""
-        title = job.get('title', 'Unknown')
-        title_en = job.get('title_en', '')
-        location = job.get('location', 'N/A')
-        location_en = job.get('location_en', '')
-        organization = job.get('organization', 'N/A')
-        organization_en = job.get('organization_en', '')
-        start_date = job.get('start_date', 'N/A')
-        employment_type = job.get('employment_type', 'N/A')
-        employment_type_en = job.get('employment_type_en', '')
-        salary = job.get('salary', 'N/A')
-        salary_en = job.get('salary_en', '')
-        url = job.get('url', '')
-        job_id = job.get('id', 'N/A')
+    def _format_job_message(self, job: Dict, language: str = 'zh') -> str:
+        """Format job data into a Telegram message (pure Chinese or pure English)
 
-        # Build message with Chinese and English
-        message = f"""<b>🇹🇼 新工作機會！ | 🇺🇸 New Job Opportunity!</b>
+        Args:
+            job: Job posting dictionary
+            language: 'zh' for pure Chinese, 'en' for pure English
+        """
+        if language == 'en':
+            title = job.get('title_en', job.get('title', 'Unknown'))
+            location = job.get('location_en', job.get('location', 'N/A'))
+            organization = job.get('organization_en', job.get('organization', 'N/A'))
+            employment_type = job.get('employment_type_en', job.get('employment_type', 'N/A'))
+            salary = job.get('salary_en', job.get('salary', 'N/A'))
+            url = job.get('url', '')
+            job_id = job.get('id', 'N/A')
+            start_date = job.get('start_date', 'N/A')
 
-<b>職位 | Position:</b>
+            message = f"""<b>🇺🇸 New Job Opportunity!</b>
+
+<b>Position:</b>
 {title}
-{title_en if title_en else ''}
 
-<b>地點 | Location:</b>
-{location} {location_en if location_en else ''}
+<b>Location:</b>
+{location}
 
-<b>機構 | Organization:</b>
+<b>Organization:</b>
 {organization}
-{organization_en if organization_en else ''}
 
-<b>開始日期 | Start Date:</b> {start_date}
+<b>Start Date:</b> {start_date}
 
-<b>職位類型 | Employment Type:</b>
-{employment_type} {employment_type_en if employment_type_en else ''}
+<b>Employment Type:</b>
+{employment_type}
 
-<b>薪資 | Salary:</b>
+<b>Salary:</b>
 {salary}
-{salary_en if salary_en else ''}
 
-<a href="{url}">查看詳情 | View Details</a>
+<a href="{url}">View Details</a>
 
 <code>Job ID: {job_id}</code>
 """
+        else:  # Chinese (default)
+            title = job.get('title', 'Unknown')
+            location = job.get('location', 'N/A')
+            organization = job.get('organization', 'N/A')
+            employment_type = job.get('employment_type', 'N/A')
+            salary = job.get('salary', 'N/A')
+            url = job.get('url', '')
+            job_id = job.get('id', 'N/A')
+            start_date = job.get('start_date', 'N/A')
+
+            message = f"""<b>🇹🇼 新工作機會！</b>
+
+<b>職位：</b>
+{title}
+
+<b>地點：</b>
+{location}
+
+<b>機構：</b>
+{organization}
+
+<b>開始日期：</b> {start_date}
+
+<b>職位類型：</b>
+{employment_type}
+
+<b>薪資：</b>
+{salary}
+
+<a href="{url}">查看詳情</a>
+
+<code>Job ID: {job_id}</code>
+"""
+
         return message
 
     def _format_debug_job_message(self, job: Dict) -> str:
