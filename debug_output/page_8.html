@@ -1,0 +1,683 @@
+<!DOCTYPE html><html lang="zh-Hant-TW"><head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="頁面關鍵字">
+<meta name="description" content="頁面描述介紹">
+<meta name="author" content="馬路科技 | 台北 |  台南 | 網頁設計 | 網站設計 | 網頁製作">
+<meta name="copyright" content="台北 | 台南 | 馬路網頁設計公司 (C)1996-2019">
+<title>社團法人中華民國職能治療師公會全國聯合會</title>
+<link href="images/favicon.ico" rel="shortcut icon">
+<link href="css/style.css" rel="stylesheet">
+<script src="js/jquery-2.2.0.min.js"></script>
+<script src="js/main.js"></script>
+</head>
+<body>
+<header>
+<!-- header BEGIN -->
+<div class="container">
+  <div class="headerRow"><a class="logo" href="index.php"><img src="images/logo.png" alt="">
+      <div class="logoName">
+        <p class="type">社團法人</p>
+        <p class="name">中華民國職能治療師公會全國聯合會</p>
+      </div></a>
+      <div class="rightSec">
+        <a class="memLink" href="http://siteadmin.oturoc.org.tw/login.aspx" target="_blank">
+          <img class="icon" src="images/icon-user.png" alt="">
+          <p>會員系統</p>
+        </a>
+        <a class="subBtn" href="http://jtotrp.oturoc.org.tw/?t=login" target="_blank"><img class="icon" src="images/icon-header.png" alt="">
+          <div class="text">
+            <p class="title">台灣職能治療</p>
+            <p class="subTitle">研究與實務雜誌投稿</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  <div class="menuSec"><a class="mbMenuBtn" href="javascript:;">
+      <p>選單</p></a>
+    <div class="menuRow">
+      <ul>
+        <li><a class="limitBox" href="/index.php?action=about">
+            <p>關於公會</p>
+            <p class="hover">關於公會</p></a></li>
+        <li><a class="limitBox" href="/index.php?action=news">
+            <p>最新公告</p>
+            <p class="hover">最新公告</p></a></li>
+        <li><a class="limitBox" href="/index.php?action=course">
+            <p>課程活動</p>
+            <p class="hover">課程活動</p></a></li>
+        <!--li><a class="limitBox" href="/index.php?action=registration">
+            <p>線上報名</p>
+            <p class="hover">線上報名</p></a></li-->
+        <li><a class="limitBox" href="/index.php?action=download">
+            <p>下載專區</p>
+            <p class="hover">下載專區</p></a></li>
+        <li class="active"><a class="limitBox" href="/index.php?action=recruit">
+            <p>徵人求才</p>
+            <p class="hover">徵人求才</p></a></li>
+        <li><a class="limitBox" href="/index.php?action=links">
+            <p>相關連結</p>
+            <p class="hover">相關連結</p></a></li>
+        <li><a class="limitBox" href="/index.php?action=contact">
+            <p>聯絡我們</p>
+            <p class="hover">聯絡我們</p></a></li>
+      </ul>
+    </div>
+  </div>
+</div><!-- header END -->
+</header>
+<main>
+<script>
+$(function() {
+$('.recruitItem .head').click(function(e){
+  e.preventDefault();
+
+  $(this).parent('.recruitItem').toggleClass('open');
+  $(this).siblings('.contentBox').slideToggle(400);
+})
+});
+</script>
+<div class="container">
+  <div class="pageBanner"><img src="images/banner-recruit.jpg" alt="">
+  </div>
+  <div class="pageContainer">
+    <aside>
+      <div class="asideMenu">
+        <div class="head">
+          <p class="ch">徵人求才</p>
+          <p class="en">Recruit</p>
+        </div>
+        <ul>
+          <li><a href="/index.php?action=recruit_form">徵才表單</a></li>
+          <li class="active"><a href="/index.php?action=recruit">徵才列表</a></li>
+        </ul>
+        <div class="footDec"><img src="images/aside-dec.png" alt=""></div>
+      </div>
+            <div class="asideAD">
+        <div class="adItem"><a href="https://www.google.com.tw/"><img src="https://www.oturoc.org.tw/upload/2019/08/20190822132734349.png" alt="本會中英文抬頭"></a></div><div class="adItem"><a href="http://jtotrp.oturoc.org.tw/"><img src="https://www.oturoc.org.tw/upload/2019/08/20190829232610989.jpg" alt="台灣職能治療研究與實務雜誌投稿系統"></a></div>      </div>
+    </aside>
+    <div class="mainContent">
+      <div class="pageHead">
+        <div class="imgDec"><img src="images/vector-3.png" alt=""></div>
+        <div class="headTitle">
+          <h3 class="title">徵才列表</h3>
+          <ul class="breadcrumb">
+            <li><a href="index.php"><img src="images/breadHome.png" alt=""></a></li>
+            <li><a href="/index.php?action=recruit">徵人求才</a></li>
+            <li>
+              <p>徵才列表</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="pageContent">
+        <div class="joinSec">
+          <form class="searchRow" method="GET" onsubmit="if (this.keyword.value=='') {this.keyword.focus();return false;}">               
+            <input type="hidden" name="action" value="recruit">
+			<input type="text" name="keyword" placeholder="Keywords" value="">
+            <button type="submit"><img src="images/icon-search.png" alt=""></button>
+          </form>
+          <div class="recruitList">
+            			<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">精神職能治療師</p>
+                <div class="rightInfo">
+                  <p class="place">台中市清水區大楊南街98號</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>陽光精神科醫院</span></p>
+                    <p>徵才型態<span>正職</span></p>
+                    <p>求才類別<span>精神</span></p>
+                    <p>到職日期<span></span></p>
+                    <p>截止公告<span>2025-11-30</span></p>
+                    <p>徵才人數<span>1</span></p>
+                    <p>徵才區域<span>臺中</span></p>
+                    <p>薪資待遇<span>40000-44000</span></p>
+                    <p>聯絡人<span>游琪嬅 職能治療組長</span></p>
+                    <p>聯絡電話<span>04-26202949#167</span></p>
+                    <p class="wide">電子郵件<span class="email">sunoccupational@gmail.com</span></p>
+                    <p class="wide">聯絡地址<span>台中市清水區大楊南街98號</span></p>
+                    <p class="wide">工作地址<span>台中市清水區大楊南街98號</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>1. 具有職能治療師證書。<br>
+2. 可獨立作業，具責任感、團隊合作精神、態度積極正向、有耐心及工作熱忱者。<br>
+3. 有精神科職能治療經驗者為佳。</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>一、工作說明:<br>
+1. 急/慢性及日間病房職能治療臨床作業（含ICF鑑定）、復健工作訓練、特殊節慶大型活動及社區融合等。<br>
+2. 職能治療紀錄書寫、相關行政業務、相關課程教育訓練及其他交辦事項。<br>
+3. 工作依安排輪調至急性病房、慢性病房、日間病房、工作訓練..等。<br>
+<br>
+二、薪資待遇：<br>
+1. 月薪40,000~44,000元。<br>
+2. 執登規費與學公會常年會費全額補助、員工健檢、年終獎金、三節禮金、生日禮金等。<br>
+3. 勞、健保及特休等依照勞基法相關規定。<br>
+上班時間:週一至週五08:00~12:00、13:00-17:00<br>
+週六08:00~12:00 (輪班，可補休)<br>
+<br>
+<br>
+意者請檢附履歷表(含學經歷及簡短自傳)、最高學歷證書影本、職能治療師證書影本及其他有助於我們了解您的資料，E-mail 至sunoccupational@gmail.com，經資料審核後，將儘速約時間面試。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">約用生理/小兒職能治療師</p>
+                <div class="rightInfo">
+                  <p class="place">屏東縣恆春鎮恆南路188號</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>衛生福利部恆春醫院</span></p>
+                    <p>徵才型態<span>正職</span></p>
+                    <p>求才類別<span>生理</span></p>
+                    <p>到職日期<span></span></p>
+                    <p>截止公告<span>2025-11-30</span></p>
+                    <p>徵才人數<span>1</span></p>
+                    <p>徵才區域<span>屏東</span></p>
+                    <p>薪資待遇<span>45000</span></p>
+                    <p>聯絡人<span>林老師</span></p>
+                    <p>聯絡電話<span>08-8892704#1124</span></p>
+                    <p class="wide">電子郵件<span class="email">person@hcth.mohw.gov.tw</span></p>
+                    <p class="wide">聯絡地址<span>屏東縣恆春鎮恆南路188號</span></p>
+                    <p class="wide">工作地址<span>屏東縣恆春鎮恆南路188號</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>國考證書</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>※半島的職能山腳下海岸邊，醫院位於鎮內鬧區，生活機能佳。<br>
+上班工作單純簡單，科內工作氣氛佳；<br>
+下班準時，健身、潛水、衝浪、玩立槳......上山下海即日常。<br>
+<br>
+※工作內容：<br>
+1.執行復健科職能治療業務(生理、小兒)<br>
+2.固定班，週一到週五0800-1730 (午休1.5h)<br>
+3.其他臨時交辦事項<br>
+<br>
+※待遇福利：<br>
+1.月薪45000元<br>
+2.獎勵金(視醫院營運績效約數千元不等)<br>
+3.年終考核甲等者，年終考核獎金1.5個月，並晉薪級一級<br>
+4.可申請員工宿舍<br>
+5.公會年費全額補助<br>
+6.恆春半島旅遊核心地區，生活機能佳、充滿度假感<br>
+<br>
+※嚮往美好生活、有意投遞職缺者：<br>
+1.線上投擲履歷檢附學經歷證明等證明文件影本，電子郵件請投遞至：person@hcth.mohw.gov.tw<br>
+2.或以紙本掛號郵寄屏東縣恆春鎮恆南路188號人事室收，並於封面註明應徵之職務<br>
+（不符合者，不另行通知及退件，感恩）</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">職能治療師(甲類)，物理治療師(甲類)</p>
+                <div class="rightInfo">
+                  <p class="place">屏東市建豐路180巷35號1樓</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>屏東縣輔具資源中心</span></p>
+                    <p>徵才型態<span>正職</span></p>
+                    <p>求才類別<span>輔具</span></p>
+                    <p>到職日期<span>2025-11-30</span></p>
+                    <p>截止公告<span>2025-11-30</span></p>
+                    <p>徵才人數<span>1</span></p>
+                    <p>徵才區域<span>屏東</span></p>
+                    <p>薪資待遇<span>47000</span></p>
+                    <p>聯絡人<span>蔡主任</span></p>
+                    <p>聯絡電話<span>08-7365455#29</span></p>
+                    <p class="wide">電子郵件<span class="email">assist5455@gmail.com</span></p>
+                    <p class="wide">聯絡地址<span>屏東市建豐路180巷35號1樓</span></p>
+                    <p class="wide">工作地址<span>屏東市建豐路180巷35號1樓</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>1.具物理治療師證書或職能治療師證書，本中心歡迎初領照新鮮人。<br>
+2.具有甲類評估人員資格，已取得甲類輔具評估人員證書者為優先<br>
+3.具有輔具相關服務經驗者為佳。<br>
+4.具電腦文書處理能力(熟悉Office軟體及google線上表單操作…等)。<br>
+5.可獨立作業、具服務熱忱、及耐心<br>
+【薪資待遇與福利】<br>
+學歷加給:碩士學歷加給2,000元;博士學歷加給3,000元<br>
+職務加給:擔任「評估督導」者另加2,000元<br>
+久任加給:自滿一年起,每年加給1,000元,最高至第七年止(上限7,000元)<br>
+年終獎金:為加給後月薪之1.5個月(依實際出勤出與年資比例計算)<br>
+交通支持:<br>
+附有公務車可供出勤使用<br>
+另提供交通費補貼(依實際出勤狀況核發)<br>
+勞健保、勞退提撥均依勞基法規定辦理<br>
+<br>
+面試地點:屏東輔具資源中心-屏北區、屏中區<br>
+實際到職日:面議</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>1.提供輔具諮詢、使用訓練與其他行政工作等服務。<br>
+2.於中心、據點、便利站或到宅提供提輔具評估與適配服務。<br>
+3.提供輔具宣導與教育訓練課程。<br>
+4.參與專業訓練課程。<br>
+5.協助輔具中心各項業務推動。<br>
+6.協助身心障礙者、長照服務對象及弱勢者取得輔具相關資源與提供實際服務。<br>
+7.其他交辦事項。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">職能治療師(甲類)，物理治療師(甲類)</p>
+                <div class="rightInfo">
+                  <p class="place">屏東縣潮州鎮光春路292號</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>屏東縣輔具資源中心-屏中區</span></p>
+                    <p>徵才型態<span>正職</span></p>
+                    <p>求才類別<span>輔具</span></p>
+                    <p>到職日期<span>2026-01-02</span></p>
+                    <p>截止公告<span>2025-12-31</span></p>
+                    <p>徵才人數<span>2</span></p>
+                    <p>徵才區域<span>屏東</span></p>
+                    <p>薪資待遇<span>47000</span></p>
+                    <p>聯絡人<span>陳筱瑩</span></p>
+                    <p>聯絡電話<span>08-7899599</span></p>
+                    <p class="wide">電子郵件<span class="email">assist5455@gmail.com</span></p>
+                    <p class="wide">聯絡地址<span>屏東縣潮州鎮光春路292號</span></p>
+                    <p class="wide">工作地址<span>屏東縣潮州鎮光春路292號</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>1.具物理治療師證書或職能治療師證書。<br>
+2.具有甲類評估人員資格，已取得甲類輔具評估人員證書者為優先，若尚未領有輔具評估人員資格，應於聘僱後1 年內取得甲類輔具評估人員訓練結業證明書，其未取得者，不予續聘。<br>
+3.具有輔具相關服務經驗者為佳。<br>
+4.具電腦文書處理能力(熟悉Office軟體及google線上表單操作…等)。<br>
+5.可獨立作業、具服務熱忱、及耐心<br>
+【薪資待遇與福利】<br>
+學歷加給:碩士學歷加給2,000元;博士學歷加給3,000元<br>
+職務加給:擔任「評估督導」者另加2,000元<br>
+久任加給:自滿一年起,每年加給1,000元,最高至第七年止(上限7,000元)<br>
+年終獎金:為加給後月薪之1.5個月(依實際出勤出與年資比例計算)<br>
+交通支持:<br>
+附有公務車可供出勤使用<br>
+另提供交通費補貼(依實際出勤狀況核發)<br>
+勞健保、勞退提撥均依勞基法規定辦理<br>
+<br>
+面試地點:屏東輔具資源中心-屏北區、屏中區</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>1.提供輔具諮詢、使用訓練與其他行政工作等服務。<br>
+2.於中心、據點、便利站或到宅提供提輔具評估與適配服務。<br>
+3.提供輔具宣導與教育訓練課程。<br>
+4.參與專業訓練課程。<br>
+5.協助輔具中心各項業務推動。<br>
+6.協助身心障礙者、長照服務對象及弱勢者取得輔具相關資源與提供實際服務。<br>
+7.其他交辦事項。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">成人、小兒職能治療師</p>
+                <div class="rightInfo">
+                  <p class="place">彰化縣員林市員林大道六段51號</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>員郭醫療社團法人員郭醫院</span></p>
+                    <p>徵才型態<span>正職</span></p>
+                    <p>求才類別<span>生理</span></p>
+                    <p>到職日期<span>2026-06-30</span></p>
+                    <p>截止公告<span>2026-06-30</span></p>
+                    <p>徵才人數<span>2</span></p>
+                    <p>徵才區域<span>彰化</span></p>
+                    <p>薪資待遇<span>35000-45000(依學經歷加給)</span></p>
+                    <p>聯絡人<span>賴小姐</span></p>
+                    <p>聯絡電話<span>04-8312889#3107</span></p>
+                    <p class="wide">電子郵件<span class="email">ykh.hr01@gmail.com</span></p>
+                    <p class="wide">聯絡地址<span>彰化縣員林市員林大道六段51號</span></p>
+                    <p class="wide">工作地址<span>彰化縣員林市員林大道六段51號</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>成人及小兒職能治療師各1名<br>
+學歷:專科以上<br>
+工作經驗:不拘<br>
+具職能治療師證書</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>1、服務對象:成人生理職能治療、住院、PAC、小兒復健(小兒與成人分開，不須互相支援)。<br>
+2、依照醫師診斷，評估個案狀況。<br>
+3、副木製作。<br>
+4、病歷書寫。<br>
+5、主管交辦事項。<br>
+<br>
+工作時間: 周一至五 8:00-18:00(1200-1400休息)<br>
+周六早班及晚班輪值</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">專任研究助理</p>
+                <div class="rightInfo">
+                  <p class="place">桃園市龜山區文化一路259號</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>長庚大學職能治療學系</span></p>
+                    <p>徵才型態<span>正職</span></p>
+                    <p>求才類別<span>助理</span></p>
+                    <p>到職日期<span></span></p>
+                    <p>截止公告<span>2025-12-31</span></p>
+                    <p>徵才人數<span>1</span></p>
+                    <p>徵才區域<span>桃園</span></p>
+                    <p>薪資待遇<span>依政府機關規定辦理</span></p>
+                    <p>聯絡人<span>楊婕淩 老師</span></p>
+                    <p>聯絡電話<span>03-2118800 #3058</span></p>
+                    <p class="wide">電子郵件<span class="email">chieh-ling.yang@cgu.edu.tw</span></p>
+                    <p class="wide">聯絡地址<span>桃園市龜山區文化一路259號</span></p>
+                    <p class="wide">工作地址<span>桃園市龜山區文化一路259號</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>【工作職缺】<br>
+學士級（含）以上專任研究助理一名<br>
+【工作內容】<br>
+進行中風復健相關研究，執行評估或資料收集分析，以及其他研究相關之任務，如文獻閱讀、簡報整理，數據分析，並協助研究和其他行政業務等交辦事項。<br>
+【徵求條件】<br>
+大學畢業或以上，職能治療、物理治療師背景優先，醫學健康專業背景亦可。</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>【工作地點】<br>
+長庚大學職能治療學系<br>
+(333桃園市龜山區文化一路259號第二醫學大樓六樓)<br>
+【工作時間】<br>
+上班時間：週一至週五8:30~17:30<br>
+聘期：即日起，聘任期間依照計畫執行期間而定，並視考核結果及經費使用情形決定是否續聘。<br>
+【月休】<br>
+週休二日，其餘休假依勞基法規定<br>
+【福利】<br>
+(1)	三節獎金及年終獎金1.5個月(按到職日年比例)<br>
+(2)	得申請住宿單身宿舍及汽機車停車位<br>
+(3)	免費搭乘汎航交通車與林口長庚醫院至校區接駁車<br>
+(4)	長庚醫療體系自費項目優待<br>
+(5)	學校餐廳商店優惠、圖書館書籍、DVD借閱<br>
+(6)	桃園龜山等特約商店優惠<br>
+【薪資範圍】<br>
+依《長庚大學研究計畫助理人員管理作業要點》敘薪標準，學士級第一年$36,300/月、碩士級第一年$41,500/月。<br>
+【聯絡人/連絡方式】<br>
+(1)	應徵者請提供履歷表，內含學經歷、聯絡方式、相關證明文件等。  E-mail至楊婕淩助理教授信箱chieh-ling.yang@cgu.edu.tw<br>
+(2)	郵件主旨請註明「應徵專任研究助理-姓名」<br>
+(3)	符合資格者，將通知並安排面談，不符合資格者恕不另行通知。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">精神科職能治療師</p>
+                <div class="rightInfo">
+                  <p class="place">台北市士林區文昌路95號</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>新光醫院醫療財團法人新光吳火獅紀念醫院</span></p>
+                    <p>徵才型態<span>正職</span></p>
+                    <p>求才類別<span>精神</span></p>
+                    <p>到職日期<span>2025-12-01</span></p>
+                    <p>截止公告<span>2025-11-30</span></p>
+                    <p>徵才人數<span>1</span></p>
+                    <p>徵才區域<span>臺北市</span></p>
+                    <p>薪資待遇<span>43,655 至 45,740</span></p>
+                    <p>聯絡人<span>廖小姐</span></p>
+                    <p>聯絡電話<span>2833-2211</span></p>
+                    <p class="wide">電子郵件<span class="email">A004205@ms.skh.org.tw</span></p>
+                    <p class="wide">聯絡地址<span>台北市士林區文昌路95號</span></p>
+                    <p class="wide">工作地址<span>台北市士林區文昌路95號</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>專業證照：高考職能治療師</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>1.大學(含)以上職能治療系畢業，具職能治療師證照<br>
+2.職務內容包括急性病房、成人日間病房、老年日間病房、工作訓練及各種交辦事項，每半年輪調職掌。<br>
+3.除院方持續加薪之薪資，另享有每季核發之精神科教學服務獎勵金<br>
+4.建議需具備特質：可獨立作業，具耐心、愛心、工作熱忱，與同事團隊合作能力佳<br>
+5.因應全新日間病房大樓即將落成啟用，擴大招募中。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">【半職】自費兒童職能治療師</p>
+                <div class="rightInfo">
+                  <p class="place">新竹縣竹北市國華街39號1樓</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>小樹職能治療所</span></p>
+                    <p>徵才型態<span>兼職</span></p>
+                    <p>求才類別<span>兒童</span></p>
+                    <p>到職日期<span>2026-01-01</span></p>
+                    <p>截止公告<span>2026-01-01</span></p>
+                    <p>徵才人數<span>1</span></p>
+                    <p>徵才區域<span>新竹</span></p>
+                    <p>薪資待遇<span>半職約28000~40000元以上(視上班節數)</span></p>
+                    <p>聯絡人<span>牛小姐</span></p>
+                    <p>聯絡電話<span>0933978820</span></p>
+                    <p class="wide">電子郵件<span class="email">treeotclinic@gmail.com</span></p>
+                    <p class="wide">聯絡地址<span>新竹縣竹北市國華街39號1樓</span></p>
+                    <p class="wide">工作地址<span>新竹縣竹北市國華街39號1樓</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>所內自費治療、到宅/到校治療、學術及行政指派作業。 （以所內治療為主）<br>
+1.需有兒童職能治療經驗，5年以上尤佳，可獨立作業。 <br>
+2.對兒童具耐心及愛心。可提供家長專業諮詢，給予正確的親職教養概念，推廣職能治療專業及教養知識。<br>
+3.需可獨立作業，若遇問題可主動尋求答案或主動討論。<br>
+4.處事圓融、自律、積極，大家可以一同在和諧的氛圍下工作、成長、互助。<br>
+5.社區業務型態多元，許多自費的親子活動、專業講座等機會，若有興趣嘗試，亦可額外增加收入。<br>
+ **本所提供專業內訓、指導，讓治療師更熟悉自費模式的節奏和衛教技巧，重視以家庭為中心、全人觀點落實職能治療核心，提升專業能力。</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>小樹職能治療所重視親職教養溝通，將練習融合於日常生活，提供貼近家庭及孩子本身的治療需求，落實職能治療哲學之精神，亦在社區大力推廣職能治療理念，有豐富多元的社區專案類型（如親職講座、親子活動、教育訓練講座等等）。工作氣氛溫暖和諧，重視雙向溝通、教學相長。<br>
+ <br>
+目前擴增團隊人力一名，期望組成多元的專業團隊，活用職能治療、正向教養概念，陪著孩子與家庭一同成長。<br>
+｜小樹官網參考 https://www.tree-ot.com/ ｜<br>
+— 薪 資 福 利 — <br>
+【半職】：每週工作節數為4節班以上。時間可面議。<br>
+<br>
+註｜工作節數計算：平日2節班（午班/晚班）、假日3節班（早班/午班/晚班）。晚班及假日班排案需求大。<br>
+1.底薪、業績獎金制度、交通津貼、專業獎金、全勤獎金、假日加給，月薪總計約28000~40000元以上(視上班節數)。<br>
+2.全時段意外險、員工聚餐、尾牙、年終獎金。<br>
+3.國定假日比照放假。<br>
+— 檢 附 資 料 —<br>
+<br>
+1.履歷表，請詳述兒童治療相關經驗。<br>
+2.職能治療師證書、學歷畢業證書、其他專長之證照。<br>
+請「備齊」資料，寄至 treeotclinic@gmail.com<br>
+預計到職日：114/12月中~115/1/1，可面議。  <br>
+收件後本所會進行初篩後電聯，煩請注意陌生電話呦。<br>
+若不符資格或資料不全者，則不一一通知，小樹真心感謝來信的每一位。希望吸引力法則可以吸一位心底暖暖的老師來小樹，期待在工作中大家一起互相支援、取暖、愛小孩。歡迎大家加入小樹團隊～</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">約聘照顧管理專員</p>
+                <div class="rightInfo">
+                  <p class="place">基隆市信義區信二路266號1樓（長期照顧服務管理所）</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>基隆市長期照顧服務管理所</span></p>
+                    <p>徵才型態<span>正職</span></p>
+                    <p>求才類別<span>其他</span></p>
+                    <p>到職日期<span>2025-12-31</span></p>
+                    <p>截止公告<span>2025-12-31</span></p>
+                    <p>徵才人數<span>10</span></p>
+                    <p>徵才區域<span>基隆</span></p>
+                    <p>薪資待遇<span>43,399~56,752</span></p>
+                    <p>聯絡人<span>人事承辦王小姐</span></p>
+                    <p>聯絡電話<span>02-24251527</span></p>
+                    <p class="wide">電子郵件<span class="email">jocelyn10@mail.klcg.gov.tw</span></p>
+                    <p class="wide">聯絡地址<span>基隆市信義區信二路266號1樓（長期照顧服務管理所）</span></p>
+                    <p class="wide">工作地址<span>基隆市信義區信二路266號1樓（長期照顧服務管理所）</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>人員資格：(擇一符合)<br>
+1.大學以上（含）畢業取得社會工作師、護理師、職能治療師、物理治療師、醫師、營養師、藥師、公共衛生師、心理師，且具二年以上相關照護（顧）工作經驗。<br>
+2.專科畢業具上述專門職業及技術人員證書者，且具三年以上相關照護（顧）工作經驗。<br>
+3.符合應考社會工作師資格，且具三年以上相關照顧工作經驗。<br>
+4.教育部公告老人照顧相關系所碩士畢業，且具二年以上相關照顧工作經驗。<br>
+5.教育部公告老人照顧相關學系大學畢業，且具三年以上相關照顧工作經驗。<br>
+6.教育部公告老人照顧相關學科專科畢業，且具五年以上相關照顧工作經驗。</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>1.長照需要評估<br>
+2. 長照服務連結<br>
+3. 長照個案服務品質管控<br>
+4. 其他事項<br>
+(1) 提供相關單位處理民眾長照陳情或外界關注長照服務案件所需資料。<br>
+(2) 其他有關長照需要評估、服務連結及個案服務品質管控之臨時交辦事項。<br>
+5.其他臨時交辦事項。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+						<div class="recruitItem"><a class="head" href="javascript:;">
+                <p class="jobTitle">職能治療師</p>
+                <div class="rightInfo">
+                  <p class="place">龜山，新屋，觀音，龍潭，大溪，楊梅，中壢，平鎮，八德，大園，蘆竹，桃園等可自行選擇區域</p>
+                  <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+                </div></a>
+              <div class="contentBox">
+                <div class="content">
+                  <div class="topInfo">
+                    <p>徵才機構<span>信醫居家治療所</span></p>
+                    <p>徵才型態<span>兼職</span></p>
+                    <p>求才類別<span>生理</span></p>
+                    <p>到職日期<span>2025-12-01</span></p>
+                    <p>截止公告<span>2025-11-30</span></p>
+                    <p>徵才人數<span>2</span></p>
+                    <p>徵才區域<span>桃園</span></p>
+                    <p>薪資待遇<span>時薪1100起</span></p>
+                    <p>聯絡人<span>張老師</span></p>
+                    <p>聯絡電話<span>0921075727</span></p>
+                    <p class="wide">電子郵件<span class="email">hsinyipt@gmail.com</span></p>
+                    <p class="wide">聯絡地址<span>桃園市平鎮區</span></p>
+                    <p class="wide">工作地址<span>龜山，新屋，觀音，龍潭，大溪，楊梅，中壢，平鎮，八德，大園，蘆竹，桃園等可自行選擇區域</span></p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">條件要求：</p>
+                    <p>長照專業服務人員資格<br>
+執業執照，長照人員證照，任一年level 2及110年後上的Level 3。<br>
+<br>
+長照專業服務人員資格<br>
+1. 具備職能治療師證書，長照人員證<br>
+2. 自備交通工具(機車或汽車)<br>
+3. 需完成長照Level I、Level II與LEVEL III。<br>
+4. 需可申請支援報備</p>
+                  </div>
+                  <div class="rowSec">
+                    <p class="secTitle">工作說明：</p>
+                    <p>1.提供必要性的文書報告與紀錄<br>
+2.論件計酬制，可自行挑選接案區域，自由調整接案量(無接案壓力)<br>
+3.A碼加給另計<br>
+4.歡迎即日起到職</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+			          </div>
+        </div>
+        <div class="paginationContainer"><a class="arrow prev" href="?action=recruit&amp;p=7"><i class="fas fa-chevron-left"></i></a>
+<div class="pageSec"><ul class="pagination"><li><a href="?action=recruit&amp;p=6">6</a></li>
+<li><a href="?action=recruit&amp;p=7">7</a></li>
+<li class="active"><a>8</a></li>
+<li><a href="?action=recruit&amp;p=9">9</a></li>
+<li><a href="?action=recruit&amp;p=10">10</a></li>
+</ul>
+<div class="pageSelect"><select name="p" onchange="location.href='?action=recruit&amp;p='+this.options[this.options.selectedIndex].value">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8" selected="">8</option>
+<option value="9">9</option>
+<option value="10">10</option>
+</select></div>
+</div><a class="arrow next" href="?action=recruit&amp;p=9"><i class="fas fa-chevron-right"></i></a>
+</div>
+      </div>
+      <div class="pageFooter"><a class="menu" href="index.php"><i class="fas fa-bars"></i></a><a class="btnTop" href="javascript:;"><i class="fas fa-angle-up"></i></a>
+      </div>
+    </div>
+    <div class="mobileBottom">
+            <div class="asideAD">
+        <div class="adItem"><a href="https://www.google.com.tw/"><img src="https://www.oturoc.org.tw/upload/2019/08/20190822132734349.png" alt="本會中英文抬頭"></a></div><div class="adItem"><a href="http://jtotrp.oturoc.org.tw/"><img src="https://www.oturoc.org.tw/upload/2019/08/20190829232610989.jpg" alt="台灣職能治療研究與實務雜誌投稿系統"></a></div>      </div>
+    </div>
+  </div>
+</div>
+<!-- footer BEGIN -->
+<footer>
+  <div class="container">
+    <div class="footerRow">
+      <div class="leftSec">
+        <div class="qrcode"><img src="images/footer-qrcode.jpg" alt=""></div>
+        <div class="infoGroup">
+          <div class="info">社團法人中華民國職能治療師公會全國聯合會</div>
+          <div class="info">地址：112028臺北市北投區北投路二段9號10樓之3</div>
+          <div class="info">電話：02-2894-5266<span>傳真：02-2894-5572</span></div>
+          <div class="info">eMail：<a href="mailto:oturoc@ms64.hinet.net" target="_blank">oturoc@ms64.hinet.net</a></div>
+        </div>
+      </div>
+      <div class="rightSec">
+        <p>2019 © 社團法人中華民國職能治療師公會全國聯合會，版權所有</p>
+        <p>OTUROC,. All Rights Reserved.</p>
+        <p class="designed">Designed by iware<a href="https://www.iware.com.tw/" target="_blank" title="網頁設計公司:馬路科技"><b>網頁設計</b></a></p>
+      </div>
+    </div>
+  </div>
+</footer><!-- footer END -->
+</main>
+
+
+</body></html>
